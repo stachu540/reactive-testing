@@ -1,0 +1,8 @@
+.idea
+*.iml
+out/
+.gradle
+!gradle-wrapper.jar
+build/
+logs/
+src/test/

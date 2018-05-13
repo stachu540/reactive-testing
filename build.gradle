@@ -1,0 +1,42 @@
+
+
+plugins {
+    id 'java'
+    id 'net.ltgt.apt' version '0.15'
+    id 'io.spring.dependency-management' version '1.0.4.RELEASE'
+}
+
+group 'testing'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencyManagement {
+    imports {
+        mavenBom "io.projectreactor:reactor-bom:$reactor_version"
+        mavenBom "com.fasterxml.jackson:jackson-bom:$jackson_version"
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "com.fasterxml.jackson.core:jackson-databind"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    compile "io.projectreactor:reactor-core"
+    compile "io.projectreactor.ipc:reactor-netty"
+    compile "com.google.code.findbugs:jsr305:$jsr305_version"
+
+    compileOnly "org.projectlombok:lombok:$lombok_version"
+    annotationProcessor "org.projectlombok:lombok:$lombok_version"
+
+    testCompile "ch.qos.logback:logback-classic:$logback_version"
+}
+
+wrapper {
+    gradleVersion = "4.7"
+    distributionType = Wrapper.DistributionType.ALL
+}
