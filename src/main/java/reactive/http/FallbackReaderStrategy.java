@@ -16,24 +16,26 @@
  */
 package reactive.http;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okio.ByteString;
+import okhttp3.Response;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.Objects;
 
 /**
- * Write a request without a body.
+ * Read a response as a {@code String}, regardless of its type and response Content-Type. It serves as a "catch-all"
+ * reader.
  */
-public class EmptyWriterStrategy implements WriterStrategy<Void> {
+public class FallbackReaderStrategy implements ReaderStrategy<String> {
 
     @Override
-    public boolean canWrite(@Nullable Class<?> type, @Nullable String contentType) {
-        return type == null;
+    public boolean canRead(@Nullable Class<?> type, @Nullable String contentType) {
+        return true;
     }
 
 	@Override
-	public RequestBody write(String contentType, Void body) {
-		return RequestBody.create(MediaType.parse(contentType), ByteString.EMPTY);
+	public String read(Response response, Class<String> responseType) throws IOException {
+		Objects.requireNonNull(response);
+		return response.body().string();
 	}
 }

@@ -19,11 +19,11 @@ package reactive.http;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import reactor.core.Exceptions;
-import reactor.core.publisher.Mono;
-import reactor.ipc.netty.http.client.HttpClientRequest;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
@@ -49,16 +49,12 @@ public class JacksonWriterStrategy implements WriterStrategy<Object> {
                 || !String.class.isAssignableFrom(rawClass) && objectMapper.canSerialize(rawClass);
     }
 
-    @Override
-    public Mono<Void> write(HttpClientRequest request, @Nullable Object body) {
-        Objects.requireNonNull(request);
-        Objects.requireNonNull(body);
-        try {
-            return request.sendString(Mono.just(objectMapper.writeValueAsString(body))).then();
-        } catch (Exception e) {
-            throw Exceptions.propagate(e);
-        }
-    }
+	@Override
+	public RequestBody write(String contentType, Object body) throws IOException {
+		Objects.requireNonNull(contentType);
+		Objects.requireNonNull(body);
+		return RequestBody.create(MediaType.parse(contentType), objectMapper.writeValueAsString(body));
+	}
 
     private JavaType getJavaType(Type type) {
         TypeFactory typeFactory = this.objectMapper.getTypeFactory();

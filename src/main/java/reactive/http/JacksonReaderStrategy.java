@@ -16,17 +16,13 @@
  */
 package reactive.http;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import reactor.core.Exceptions;
-import reactor.core.publisher.Mono;
-import reactor.ipc.netty.http.client.HttpClientResponse;
+import okhttp3.Response;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 /**
  * Read a response into JSON and convert to an Object of type {@code <Res>} using Jackson 2.9.
@@ -51,21 +47,10 @@ public class JacksonReaderStrategy<Res> implements ReaderStrategy<Res> {
         return !CharSequence.class.isAssignableFrom(type) && objectMapper.canDeserialize(getJavaType(type));
     }
 
-    @Override
-    public Mono<Res> read(HttpClientResponse response, Class<Res> responseType) {
-        Objects.requireNonNull(response);
-        Objects.requireNonNull(responseType);
-        return response.receive().aggregate().asByteArray().map(bytes -> {
-            try {
-                return objectMapper.readValue(bytes, responseType);
-            } catch (JsonProcessingException e) {
-                throw Exceptions.propagate(new RuntimeException(e.toString()
-                        .replaceAll("(\"token\": \")([A-Za-z0-9.-]*)(\")", "$1hunter2$3")));
-            } catch (IOException e) {
-                throw Exceptions.propagate(e);
-            }
-        });
-    }
+	@Override
+	public Res read(Response response, Class<Res> responseType) throws IOException {
+		return objectMapper.readValue(response.body().bytes(), responseType);
+	}
 
     private JavaType getJavaType(Type type) {
         return objectMapper.getTypeFactory().constructType(type);

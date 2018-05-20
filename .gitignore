@@ -1,8 +1,5 @@
-.idea
+.idea/
 *.iml
-out/
-.gradle
-!gradle-wrapper.jar
+*.log
+.gradle/
 build/
-logs/
-src/test/

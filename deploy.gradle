@@ -1,0 +1,52 @@
+apply plugin: "maven-publish"
+apply plugin: "com.jfrog.bintray"
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    baseName = "${rootProject.name}-${baseName}"
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    baseName = "${rootProject.name}-${baseName}"
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        mainProject(MavenPublication) {
+            from project.components.java
+            groupId group
+            artifactId "${rootProject.name}-${project.name}"
+            version version
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+    publications = ['mainProject']
+    pkg {
+        repo = 'Java'
+        name = "${rootProject.name}"
+        userOrg = user
+        desc = description
+        websiteUrl = 'https://github.com/stachu540/java-bintray-deploy-template'
+        vcsUrl = 'https://github.com/stachu540/java-bintray-deploy-template.git'
+        issueTrackerUrl = 'https://github.com/stachu540/java-bintray-deploy-template/issues'
+        licenses = ['MIT']
+        publicDownloadNumbers = true
+        version {
+            name = project.version
+        }
+    }
+}

@@ -16,8 +16,7 @@
  */
 package reactive.http;
 
-import reactor.core.publisher.Mono;
-import reactor.ipc.netty.http.client.HttpClientResponse;
+import okhttp3.Response;
 
 import javax.annotation.Nullable;
 
@@ -31,8 +30,8 @@ public class EmptyReaderStrategy implements ReaderStrategy<Void> {
         return type != null && type == Void.class;
     }
 
-    @Override
-    public Mono<Void> read(HttpClientResponse response, Class<Void> responseType) {
-        return Mono.empty();
+	@Override
+    public Void read(Response response, Class<Void> responseType) {
+        return null;
     }
 }

@@ -1,39 +1,44 @@
-
-
 plugins {
     id 'java'
-    id 'net.ltgt.apt' version '0.15'
-    id 'io.spring.dependency-management' version '1.0.4.RELEASE'
+    id 'maven-publish'
+    id "net.ltgt.apt" version "0.15"
+    id 'com.jfrog.bintray' version '1.8.0'
+    id 'com.jfrog.artifactory' version '4.7.2'
+    id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
 
-group 'testing'
+apply from: "${rootDir}/deploy.gradle"
+
+group 'com.github.stachu540'
 version '1.0-SNAPSHOT'
+description "REST Reactive"
 
 sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-dependencyManagement {
-    imports {
-        mavenBom "io.projectreactor:reactor-bom:$reactor_version"
-        mavenBom "com.fasterxml.jackson:jackson-bom:$jackson_version"
-    }
-}
+targetCompatibility = 1.6
 
 repositories {
     jcenter()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "com.fasterxml.jackson:jackson-bom:$jackson_version"
+    }
+}
+
 dependencies {
-    compile "com.fasterxml.jackson.core:jackson-databind"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
-    compile "io.projectreactor:reactor-core"
-    compile "io.projectreactor.ipc:reactor-netty"
+    compile "org.slf4j:slf4j-api:$slf4j_version"
+    compile "com.squareup.okhttp3:okhttp:$okhttp_version"
     compile "com.google.code.findbugs:jsr305:$jsr305_version"
+    compile "io.reactivex.rxjava2:rxjava:$rxjava_version"
+    compile "com.fasterxml.jackson.core:jackson-databind"
 
     compileOnly "org.projectlombok:lombok:$lombok_version"
     annotationProcessor "org.projectlombok:lombok:$lombok_version"
 
-    testCompile "ch.qos.logback:logback-classic:$logback_version"
+    testCompile "junit:junit:$junit_version"
+    testCompile "org.mockito:mockito-core:$mockito_version"
+    testCompile "ch.qos.logback:logback-classic:$logback_verion"
 }
 
 wrapper {
